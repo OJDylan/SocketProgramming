@@ -17,6 +17,20 @@ public class ClientB {
 
             //sends output to the socket
             output = new DataOutputStream(socket.getOutputStream());
+
+            DataInputStream inp = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            new Thread(() -> {
+                while (true) {
+                    String str;
+                    try {
+                        str = inp.readUTF();
+                        System.out.println(str);
+                    } catch (IOException e) {
+                        e.printStackTrace();//error.
+                        break;
+                    }
+                }
+            }, "Client Receiver.").start();
         } catch (IOException e) { System.out.println(e); }
 
         //string to read message from input
@@ -29,6 +43,7 @@ public class ClientB {
                 output.writeUTF(line);
             } catch (IOException e) { System.out.println(e); }
         }
+
         //close the connection
         try {
             input.close();
@@ -37,8 +52,6 @@ public class ClientB {
         } catch (IOException e) { System.out.println(e); }
     }
 
-    public static void main (String args[]) {
-        ClientB client = new ClientB("127.0.0.1", 5000);
-    }
+    public static void main (String args[]) { ClientB client = new ClientB("127.0.0.1", 5000); }
 }
 

@@ -1,12 +1,17 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class EchoThread extends Thread {
+    private static List<Socket> socketList = new CopyOnWriteArrayList<>();
     private Socket socket;
 
+    //constructor
     public EchoThread(Socket clientSocket) {
         this.socket = clientSocket;
+        socketList.add(socket); //adds clients to socketList
     }
 
     @Override
@@ -22,12 +27,24 @@ class EchoThread extends Thread {
                 try {
                     line = inp.readUTF();
                     System.out.println(line);
-                } catch (IOException e) { System.out.println(e); }
+
+                    forwardMessageToClients(line); //outputs message to other clients
+                } catch (IOException e) { System.out.println(e); break;}
             }
 
+            //closes connection when client terminates the connection
             System.out.print("Closing Connection");
             socket.close();
         } catch (IOException e) { System.out.println(e); }
+    }
+
+    //forward message to clients method
+    private void forwardMessageToClients(String line) throws IOException {
+        for (Socket other : socketList) {
+            if (other == socket) { continue; }
+            DataOutputStream output = new DataOutputStream(other.getOutputStream());
+            output.writeUTF(line);
+        }
     }
 }
 
@@ -38,7 +55,7 @@ public class Server {
         ServerSocket serverSocket = null;
         Socket socket = null;
 
-        //opens the server
+        //starts the server
         try {
             serverSocket = new ServerSocket(PORT);
             System.out.println("Server started");
@@ -46,10 +63,12 @@ public class Server {
         } catch (IOException e) { System.out.println(e); }
 
         //while loop to accept multiple clients
+        int count = 1;
         while(true) {
             try {
                 socket = serverSocket.accept();
-                System.out.println("Client accepted!\n");
+                System.out.println("Client " + count + " accepted!");
+                count++;
             } catch (IOException e) { System.out.println(e); }
 
             //starts the server thread

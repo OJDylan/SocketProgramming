@@ -17,6 +17,17 @@ public class ClientA {
 
             //sends output to the socket
             output = new DataOutputStream(socket.getOutputStream());
+
+            DataInputStream inp = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            new Thread(() -> {
+                while (true) {
+                    String str;
+                    try {
+                        str = inp.readUTF();
+                        System.out.println(str);
+                    } catch (IOException e) { e.printStackTrace(); break; }
+                }
+            }, "Client Receiver.").start();
         } catch (IOException e) { System.out.println(e); }
 
         //string to read message from input
@@ -29,6 +40,7 @@ public class ClientA {
                 output.writeUTF(line);
             } catch (IOException e) { System.out.println(e); }
         }
+
         //close the connection
         try {
             input.close();
