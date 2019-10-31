@@ -1,3 +1,12 @@
+/*
+    Original Author : Ooi Junjie Dylan 0120185
+    Finished Date   : 30/9/19
+
+    DISCLAIMER      :   This assignment is done through MY own self study and referencing from online sources.
+
+    Thank you :)
+ */
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,7 +37,7 @@ class EchoThread extends Thread {
                     line = inp.readUTF();
                     System.out.println(line);
 
-                    forwardMessageToClients(line); //outputs message to other clients
+                    forwardMessageToClients(line); //forwards message to other clients
                 } catch (IOException e) { System.out.println(e); break;}
             }
 

@@ -18,6 +18,7 @@ public class ClientA {
             //sends output to the socket
             output = new DataOutputStream(socket.getOutputStream());
 
+            //thread class using lambda expression to read what the user inputs
             DataInputStream inp = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             new Thread(() -> {
                 while (true) {

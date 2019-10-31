@@ -18,6 +18,7 @@ public class ClientB {
             //sends output to the socket
             output = new DataOutputStream(socket.getOutputStream());
 
+            //thread class using lambda expression to read what the user inputs
             DataInputStream inp = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             new Thread(() -> {
                 while (true) {
@@ -25,10 +26,7 @@ public class ClientB {
                     try {
                         str = inp.readUTF();
                         System.out.println(str);
-                    } catch (IOException e) {
-                        e.printStackTrace();//error.
-                        break;
-                    }
+                    } catch (IOException e) { e.printStackTrace(); break; }
                 }
             }, "Client Receiver.").start();
         } catch (IOException e) { System.out.println(e); }
